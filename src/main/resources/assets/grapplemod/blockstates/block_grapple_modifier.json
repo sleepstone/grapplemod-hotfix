@@ -1,5 +1,7 @@
 {
-    "variants": {
-        "": { "model": "grapplemod:block/block_grapple_modifier" }
+  "variants": {
+    "": {
+      "model": "grapplemod:block/block_grapple_modifier"
     }
+  }
 }

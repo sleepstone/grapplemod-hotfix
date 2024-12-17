@@ -23,42 +23,42 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class PlayerMovementMessage extends BaseMessageServer {
-   
-	public int entityId;
-	public double x;
-	public double y;
-	public double z;
-	public double mx;
-	public double my;
-	public double mz;
-	
-	public PlayerMovementMessage(FriendlyByteBuf buf) {
-		super(buf);
-	}
-	
+
+    public int entityId;
+    public double x;
+    public double y;
+    public double z;
+    public double mx;
+    public double my;
+    public double mz;
+
+    public PlayerMovementMessage(FriendlyByteBuf buf) {
+        super(buf);
+    }
+
     public PlayerMovementMessage(int entityId, double x, double y, double z, double mx, double my, double mz) {
-    	this.entityId = entityId;
-    	this.x = x;
-    	this.y = y;
-    	this.z = z;
-    	this.mx = mx;
-    	this.my = my;
-    	this.mz = mz;
+        this.entityId = entityId;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.mx = mx;
+        this.my = my;
+        this.mz = mz;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	try {
-	    	this.entityId = buf.readInt();
-	    	this.x = buf.readDouble();
-	    	this.y = buf.readDouble();
-	    	this.z = buf.readDouble();
-	    	this.mx = buf.readDouble();
-	    	this.my = buf.readDouble();
-	    	this.mz = buf.readDouble();
-    	} catch (Exception e) {
-    		System.out.print("Playermovement error: ");
-    		System.out.println(buf);
-    	}
+        try {
+            this.entityId = buf.readInt();
+            this.x = buf.readDouble();
+            this.y = buf.readDouble();
+            this.z = buf.readDouble();
+            this.mx = buf.readDouble();
+            this.my = buf.readDouble();
+            this.mz = buf.readDouble();
+        } catch (Exception e) {
+            System.out.print("Playermovement error: ");
+            System.out.println(buf);
+        }
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -69,27 +69,27 @@ public class PlayerMovementMessage extends BaseMessageServer {
         buf.writeDouble(mx);
         buf.writeDouble(my);
         buf.writeDouble(mz);
-        
+
     }
 
     public void processMessage(NetworkEvent.Context ctx) {
-    	final ServerPlayer referencedPlayer = ctx.getSender();
-        
-		if(referencedPlayer.getId() == this.entityId) {
-			new Vec(this.x, this.y, this.z).setPos(referencedPlayer);
-			new Vec(this.mx, this.my, this.mz).setMotion(referencedPlayer);
+        final ServerPlayer referencedPlayer = ctx.getSender();
 
-			referencedPlayer.connection.resetPosition();
-			
-			if (!referencedPlayer.onGround()) {
-				if (this.my >= 0) {
-					referencedPlayer.fallDistance = 0;
-				} else {
-					double gravity = 0.05 * 2;
-					// d = v^2 / 2g
-					referencedPlayer.fallDistance = (float) (Math.pow(this.my, 2) / (2 * gravity));
-				}
-			}
-		}
+        if (referencedPlayer.getId() == this.entityId) {
+            new Vec(this.x, this.y, this.z).setPos(referencedPlayer);
+            new Vec(this.mx, this.my, this.mz).setMotion(referencedPlayer);
+
+            referencedPlayer.connection.resetPosition();
+
+            if (!referencedPlayer.onGround()) {
+                if (this.my >= 0) {
+                    referencedPlayer.fallDistance = 0;
+                } else {
+                    double gravity = 0.05 * 2;
+                    // d = v^2 / 2g
+                    referencedPlayer.fallDistance = (float) (Math.pow(this.my, 2) / (2 * gravity));
+                }
+            }
+        }
     }
 }

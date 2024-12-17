@@ -35,25 +35,25 @@ import java.util.LinkedList;
  */
 
 public class GrappleAttachMessage extends BaseMessageClient {
-   
-	public int id;
-	public double x;
-	public double y;
-	public double z;
-	public int controlId;
-	public int entityId;
-	public BlockPos blockPos;
-	public LinkedList<Vec> segments;
-	public LinkedList<Direction> segmentTopSides;
-	public LinkedList<Direction> segmentBottomSides;
-	public GrappleCustomization custom;
+
+    public int id;
+    public double x;
+    public double y;
+    public double z;
+    public int controlId;
+    public int entityId;
+    public BlockPos blockPos;
+    public LinkedList<Vec> segments;
+    public LinkedList<Direction> segmentTopSides;
+    public LinkedList<Direction> segmentBottomSides;
+    public GrappleCustomization custom;
 
     public GrappleAttachMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public GrappleAttachMessage(int id, double x, double y, double z, int controlid, int entityid, BlockPos blockpos, LinkedList<Vec> segments, LinkedList<Direction> segmenttopsides, LinkedList<Direction> segmentbottomsides, GrappleCustomization custom) {
-    	this.id = id;
+        this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -67,7 +67,7 @@ public class GrappleAttachMessage extends BaseMessageClient {
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.id = buf.readInt();
+        this.id = buf.readInt();
         this.x = buf.readDouble();
         this.y = buf.readDouble();
         this.z = buf.readDouble();
@@ -77,32 +77,32 @@ public class GrappleAttachMessage extends BaseMessageClient {
         int blocky = buf.readInt();
         int blockz = buf.readInt();
         this.blockPos = new BlockPos(blockx, blocky, blockz);
-        
+
         this.custom = new GrappleCustomization();
         this.custom.readFromBuf(buf);
-        
+
         int size = buf.readInt();
         this.segments = new LinkedList<Vec>();
         this.segmentBottomSides = new LinkedList<Direction>();
         this.segmentTopSides = new LinkedList<Direction>();
 
-		segments.add(new Vec(0, 0, 0));
-		segmentBottomSides.add(null);
-		segmentTopSides.add(null);
-		
-		for (int i = 1; i < size-1; i++) {
-        	this.segments.add(new Vec(buf.readDouble(), buf.readDouble(), buf.readDouble()));
-        	this.segmentBottomSides.add(buf.readEnum(Direction.class));
-        	this.segmentTopSides.add(buf.readEnum(Direction.class));
+        segments.add(new Vec(0, 0, 0));
+        segmentBottomSides.add(null);
+        segmentTopSides.add(null);
+
+        for (int i = 1; i < size - 1; i++) {
+            this.segments.add(new Vec(buf.readDouble(), buf.readDouble(), buf.readDouble()));
+            this.segmentBottomSides.add(buf.readEnum(Direction.class));
+            this.segmentTopSides.add(buf.readEnum(Direction.class));
         }
-		
-		segments.add(new Vec(0, 0, 0));
-		segmentBottomSides.add(null);
-		segmentTopSides.add(null);
+
+        segments.add(new Vec(0, 0, 0));
+        segmentBottomSides.add(null);
+        segmentTopSides.add(null);
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.id);
+        buf.writeInt(this.id);
         buf.writeDouble(this.x);
         buf.writeDouble(this.y);
         buf.writeDouble(this.z);
@@ -111,35 +111,35 @@ public class GrappleAttachMessage extends BaseMessageClient {
         buf.writeInt(this.blockPos.getX());
         buf.writeInt(this.blockPos.getY());
         buf.writeInt(this.blockPos.getZ());
-        
+
         this.custom.writeToBuf(buf);
-        
+
         buf.writeInt(this.segments.size());
-        for (int i = 1; i < this.segments.size()-1; i++) {
-        	buf.writeDouble(this.segments.get(i).x);
-        	buf.writeDouble(this.segments.get(i).y);
-        	buf.writeDouble(this.segments.get(i).z);
-        	buf.writeEnum(this.segmentBottomSides.get(i));
-        	buf.writeEnum(this.segmentTopSides.get(i));
+        for (int i = 1; i < this.segments.size() - 1; i++) {
+            buf.writeDouble(this.segments.get(i).x);
+            buf.writeDouble(this.segments.get(i).y);
+            buf.writeDouble(this.segments.get(i).z);
+            buf.writeEnum(this.segmentBottomSides.get(i));
+            buf.writeEnum(this.segmentTopSides.get(i));
         }
     }
 
     @OnlyIn(Dist.CLIENT)
     public void processMessage(NetworkEvent.Context ctx) {
-		Level world = Minecraft.getInstance().level;
-    	Entity grapple = world.getEntity(this.id);
-    	if (grapple instanceof GrapplehookEntity) {
-        	((GrapplehookEntity) grapple).clientAttach(this.x, this.y, this.z);
-        	SegmentHandler segmenthandler = ((GrapplehookEntity) grapple).segmentHandler;
-        	segmenthandler.segments = this.segments;
-        	segmenthandler.segmentBottomSides = this.segmentBottomSides;
-        	segmenthandler.segmentTopSides = this.segmentTopSides;
-        	
-        	Entity player = world.getEntity(this.entityId);
-        	segmenthandler.forceSetPos(new Vec(this.x, this.y, this.z), Vec.positionVec(player));
-    	} else {
-    	}
-    	            	
-    	ClientProxyInterface.proxy.createControl(this.controlId, this.id, this.entityId, world, new Vec(this.x, this.y, this.z), this.blockPos, this.custom);
+        Level world = Minecraft.getInstance().level;
+        Entity grapple = world.getEntity(this.id);
+        if (grapple instanceof GrapplehookEntity) {
+            ((GrapplehookEntity) grapple).clientAttach(this.x, this.y, this.z);
+            SegmentHandler segmenthandler = ((GrapplehookEntity) grapple).segmentHandler;
+            segmenthandler.segments = this.segments;
+            segmenthandler.segmentBottomSides = this.segmentBottomSides;
+            segmenthandler.segmentTopSides = this.segmentTopSides;
+
+            Entity player = world.getEntity(this.entityId);
+            segmenthandler.forceSetPos(new Vec(this.x, this.y, this.z), Vec.positionVec(player));
+        } else {
+        }
+
+        ClientProxyInterface.proxy.createControl(this.controlId, this.id, this.entityId, world, new Vec(this.x, this.y, this.z), this.blockPos, this.custom);
     }
 }

@@ -28,32 +28,32 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class GrappleAttachPosMessage extends BaseMessageClient {
-   
-	public int id;
-	public double x;
-	public double y;
-	public double z;
+
+    public int id;
+    public double x;
+    public double y;
+    public double z;
 
     public GrappleAttachPosMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public GrappleAttachPosMessage(int id, double x, double y, double z) {
-    	this.id = id;
+        this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.id = buf.readInt();
+        this.id = buf.readInt();
         this.x = buf.readDouble();
         this.y = buf.readDouble();
         this.z = buf.readDouble();
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.id);
+        buf.writeInt(this.id);
         buf.writeDouble(this.x);
         buf.writeDouble(this.y);
         buf.writeDouble(this.z);
@@ -61,10 +61,10 @@ public class GrappleAttachPosMessage extends BaseMessageClient {
 
     @OnlyIn(Dist.CLIENT)
     public void processMessage(NetworkEvent.Context ctx) {
-    	Level world = Minecraft.getInstance().level;
-    	Entity grapple = world.getEntity(this.id);
-    	if (grapple instanceof GrapplehookEntity) {
-        	((GrapplehookEntity) grapple).setAttachPos(this.x, this.y, this.z);
-    	}
+        Level world = Minecraft.getInstance().level;
+        Entity grapple = world.getEntity(this.id);
+        if (grapple instanceof GrapplehookEntity) {
+            ((GrapplehookEntity) grapple).setAttachPos(this.x, this.y, this.z);
+        }
     }
 }

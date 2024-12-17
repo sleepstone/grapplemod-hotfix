@@ -1,14 +1,14 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"ingredients": [
-		{
-			"item": "grapplemod:baseupgradeitem"
-		}, 
-		{
-			"item": "minecraft:nether_star"
-		}
-	],
-	"result": {
-		"item": "grapplemod:limitsupgradeitem"
-	}
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "grapplemod:baseupgradeitem"
+    },
+    {
+      "item": "minecraft:nether_star"
+    }
+  ],
+  "result": {
+    "item": "grapplemod:limitsupgradeitem"
+  }
 }

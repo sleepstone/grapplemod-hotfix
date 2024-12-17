@@ -24,31 +24,31 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class DetachSingleHookMessage extends BaseMessageClient {
-   
-	public int id;
-	public int hookid;
+
+    public int id;
+    public int hookid;
 
     public DetachSingleHookMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public DetachSingleHookMessage(int id, int hookid) {
-    	this.id = id;
-    	this.hookid = hookid;
+        this.id = id;
+        this.hookid = hookid;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.id = buf.readInt();
-    	this.hookid = buf.readInt();
+        this.id = buf.readInt();
+        this.hookid = buf.readInt();
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.id);
-    	buf.writeInt(this.hookid);
+        buf.writeInt(this.id);
+        buf.writeInt(this.hookid);
     }
-    
+
     @OnlyIn(Dist.CLIENT)
     public void processMessage(NetworkEvent.Context ctx) {
-    	ClientControllerManager.receiveGrappleDetachHook(this.id, this.hookid);
+        ClientControllerManager.receiveGrappleDetachHook(this.id, this.hookid);
     }
 }

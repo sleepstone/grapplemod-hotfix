@@ -12,8 +12,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -31,99 +29,90 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.HashSet;
 
 public class CommonEventHandlers {
-	public CommonEventHandlers() {
-	    MinecraftForge.EVENT_BUS.register(this);
+    public CommonEventHandlers() {
+        MinecraftForge.EVENT_BUS.register(this);
 
-		AutoConfig.register(GrappleConfig.class, Toml4jConfigSerializer<GrappleConfig>::new);
-	}
-
-	@SubscribeEvent
-    public void onBlockBreak(BreakEvent event) {
-    	Player player = event.getPlayer();
-    	if (player != null) {
-	    	ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-	    	if (stack != null) {
-	    		Item item = stack.getItem();
-	    		if (item instanceof GrapplehookItem) {
-	    			event.setCanceled(true);
-	    			return;
-	    		}
-	    	}
-    	}
+        AutoConfig.register(GrappleConfig.class, Toml4jConfigSerializer::new);
     }
-    
+
+    @SubscribeEvent
+    public void onBlockBreak(BreakEvent event) {
+        Player player = event.getPlayer();
+        if (player != null) {
+            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if (stack != null) {
+                Item item = stack.getItem();
+                if (item instanceof GrapplehookItem) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-    	if (!event.getEntity().level().isClientSide) {
-    		Entity entity = event.getEntity();
-    		int id = entity.getId();
-    		boolean isconnected = ServerControllerManager.allGrapplehookEntities.containsKey(id);
-    		if (isconnected) {
-    			HashSet<GrapplehookEntity> grapplehookEntities = ServerControllerManager.allGrapplehookEntities.get(id);
-    			for (GrapplehookEntity hookEntity: grapplehookEntities) {
-    				hookEntity.removeServer();
-    			}
-    			grapplehookEntities.clear();
+        if (!event.getEntity().level().isClientSide) {
+            Entity entity = event.getEntity();
+            int id = entity.getId();
+            boolean isconnected = ServerControllerManager.allGrapplehookEntities.containsKey(id);
+            if (isconnected) {
+                HashSet<GrapplehookEntity> grapplehookEntities = ServerControllerManager.allGrapplehookEntities.get(id);
+                for (GrapplehookEntity hookEntity : grapplehookEntities) {
+                    hookEntity.removeServer();
+                }
+                grapplehookEntities.clear();
 
-    			ServerControllerManager.attached.remove(id);
-    			
-    			if (GrapplehookItem.grapplehookEntitiesLeft.containsKey(entity)) {
-    				GrapplehookItem.grapplehookEntitiesLeft.remove(entity);
-    			}
-    			if (GrapplehookItem.grapplehookEntitiesRight.containsKey(entity)) {
-    				GrapplehookItem.grapplehookEntitiesRight.remove(entity);
-    			}
-    			
-    			GrapplemodUtils.sendToCorrectClient(new GrappleDetachMessage(id), id, entity.level());
-    		}
-    	}
-	}
-	
-	@SubscribeEvent
-	public void onLivingHurtEvent(LivingHurtEvent event) {
-		if (event.getEntity() != null && event.getEntity() instanceof Player) {
-			Player player = (Player)event.getEntity();
-			
-			for (ItemStack armor : player.getArmorSlots()) {
-			    if (armor != null && armor.getItem() instanceof LongFallBoots)
-			    {
-			    	if (event.getSource() == event.getEntity().level().damageSources().flyIntoWall()) {
-						// this cancels the fall event so you take no damage
-						event.setCanceled(true);
-			    	}
-			    }
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onLivingFallEvent(LivingFallEvent event) {
-		if (event.getEntity() != null && event.getEntity() instanceof Player) {
-			Player player = (Player)event.getEntity();
-			
-			for (ItemStack armor : player.getArmorSlots()) {
-			    if (armor != null && armor.getItem() instanceof LongFallBoots)
-			    {
-					// this cancels the fall event so you take no damage
-					event.setCanceled(true);
-			    }
-			}
-		}
-	}
+                ServerControllerManager.attached.remove(id);
 
-	@SubscribeEvent
-	public void onServerStart(ServerStartedEvent event) {
-		if (GrappleConfig.getConf().other.override_allowflight) {
-			event.getServer().setFlightAllowed(true);
-		}
-	}
-	
-	@SubscribeEvent
-	public void onPlayerLoggedInEvent(PlayerLoggedInEvent e) {
-		if (e.getEntity() instanceof ServerPlayer) {
-			CommonSetup.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new LoggedInMessage(GrappleConfig.getConf()));
-		} else {
-			System.out.println("Not an PlayerEntityMP");
-		}
-	}
+                GrapplehookItem.grapplehookEntitiesLeft.remove(entity);
+                GrapplehookItem.grapplehookEntitiesRight.remove(entity);
+
+                GrapplemodUtils.sendToCorrectClient(new GrappleDetachMessage(id), id, entity.level());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingHurtEvent(LivingHurtEvent event) {
+        if (event.getEntity() != null && event.getEntity() instanceof Player player) {
+
+            for (ItemStack armor : player.getArmorSlots()) {
+                if (armor != null && armor.getItem() instanceof LongFallBoots) {
+                    if (event.getSource() == event.getEntity().level().damageSources().flyIntoWall()) {
+                        // this cancels the fall event so you take no damage
+                        event.setCanceled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingFallEvent(LivingFallEvent event) {
+        if (event.getEntity() != null && event.getEntity() instanceof Player player) {
+
+            for (ItemStack armor : player.getArmorSlots()) {
+                if (armor != null && armor.getItem() instanceof LongFallBoots) {
+                    // this cancels the fall event so you take no damage
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onServerStart(ServerStartedEvent event) {
+        if (GrappleConfig.getConf().other.override_allowflight) {
+            event.getServer().setFlightAllowed(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedInEvent(PlayerLoggedInEvent e) {
+        if (e.getEntity() instanceof ServerPlayer) {
+            CommonSetup.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) e.getEntity()), new LoggedInMessage(GrappleConfig.getConf()));
+        } else {
+            System.out.println("Not an PlayerEntityMP");
+        }
+    }
 }

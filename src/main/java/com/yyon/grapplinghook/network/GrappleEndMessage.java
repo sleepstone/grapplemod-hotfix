@@ -26,45 +26,45 @@ import java.util.HashSet;
  */
 
 public class GrappleEndMessage extends BaseMessageServer {
-   
-	public int entityId;
-	public HashSet<Integer> hookEntityIds;
+
+    public int entityId;
+    public HashSet<Integer> hookEntityIds;
 
     public GrappleEndMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public GrappleEndMessage(int entityId, HashSet<Integer> hookEntityIds) {
-    	this.entityId = entityId;
-    	this.hookEntityIds = hookEntityIds;
+        this.entityId = entityId;
+        this.hookEntityIds = hookEntityIds;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.entityId = buf.readInt();
-    	int size = buf.readInt();
-    	this.hookEntityIds = new HashSet<Integer>();
-    	for (int i = 0; i < size; i++) {
-    		this.hookEntityIds.add(buf.readInt());
-    	}
+        this.entityId = buf.readInt();
+        int size = buf.readInt();
+        this.hookEntityIds = new HashSet<Integer>();
+        for (int i = 0; i < size; i++) {
+            this.hookEntityIds.add(buf.readInt());
+        }
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.entityId);
-    	buf.writeInt(this.hookEntityIds.size());
-    	for (int id : this.hookEntityIds) {
-        	buf.writeInt(id);
-    	}
+        buf.writeInt(this.entityId);
+        buf.writeInt(this.hookEntityIds.size());
+        for (int id : this.hookEntityIds) {
+            buf.writeInt(id);
+        }
     }
 
     public void processMessage(NetworkEvent.Context ctx) {
-		int id = this.entityId;
-		
-		ServerPlayer player = ctx.getSender();
-		if (player == null) {
-			return;
-		}
-		Level w = player.level();
-		
-		ServerControllerManager.receiveGrappleEnd(id, w, this.hookEntityIds);
+        int id = this.entityId;
+
+        ServerPlayer player = ctx.getSender();
+        if (player == null) {
+            return;
+        }
+        Level w = player.level();
+
+        ServerControllerManager.receiveGrappleEnd(id, w, this.hookEntityIds);
     }
 }

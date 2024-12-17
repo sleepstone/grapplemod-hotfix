@@ -1,7 +1,6 @@
 package com.yyon.grapplinghook.items;
 
 import com.yyon.grapplinghook.client.ClientProxyInterface;
-import com.yyon.grapplinghook.common.CommonSetup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -34,31 +33,31 @@ import java.util.List;
  */
 
 public class EnderStaffItem extends Item {
-	
-	public EnderStaffItem() {
-		super(new Item.Properties().stacksTo(1));
-	}
-	
-	public void doRightClick(ItemStack stack, Level worldIn, Player player) {
-		if (worldIn.isClientSide) {
-			ClientProxyInterface.proxy.launchPlayer(player);
-		}
-	}
-	
+
+    public EnderStaffItem() {
+        super(new Properties().stacksTo(1));
+    }
+
+    public void doRightClick(ItemStack stack, Level worldIn, Player player) {
+        if (worldIn.isClientSide) {
+            ClientProxyInterface.proxy.launchPlayer(player);
+        }
+    }
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand hand) {
-    	ItemStack stack = playerIn.getItemInHand(hand);
+        ItemStack stack = playerIn.getItemInHand(hand);
         this.doRightClick(stack, worldIn, playerIn);
 
-    	return InteractionResultHolder.success(stack);
-	}
-    
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag par4) {
-		list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.launcheritem.desc")));
-		list.add(Component.literal(""));
-		list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.launcheritemaim.desc")));
-		list.add(Component.literal(ClientProxyInterface.proxy.getKeyname(ClientProxyInterface.McKeys.keyBindUseItem) + ClientProxyInterface.proxy.localize("grappletooltip.launcheritemcontrols.desc")));
-	}
+        return InteractionResultHolder.success(stack);
+    }
+
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag par4) {
+        list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.launcheritem.desc")));
+        list.add(Component.literal(""));
+        list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.launcheritemaim.desc")));
+        list.add(Component.literal(ClientProxyInterface.proxy.getKeyname(ClientProxyInterface.McKeys.keyBindUseItem) + ClientProxyInterface.proxy.localize("grappletooltip.launcheritemcontrols.desc")));
+    }
 }

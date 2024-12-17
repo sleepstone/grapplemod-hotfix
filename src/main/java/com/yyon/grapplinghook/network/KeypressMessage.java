@@ -26,59 +26,58 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class KeypressMessage extends BaseMessageServer {
-	
-	KeypressItem.Keys key;
-	boolean isDown;
+
+    KeypressItem.Keys key;
+    boolean isDown;
 
     public KeypressMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public KeypressMessage(KeypressItem.Keys thekey, boolean isDown) {
-    	this.key = thekey;
-    	this.isDown = isDown;
+        this.key = thekey;
+        this.isDown = isDown;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.key = KeypressItem.Keys.values()[buf.readInt()];
-    	this.isDown = buf.readBoolean();
+        this.key = KeypressItem.Keys.values()[buf.readInt()];
+        this.isDown = buf.readBoolean();
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.key.ordinal());
-    	buf.writeBoolean(this.isDown);
+        buf.writeInt(this.key.ordinal());
+        buf.writeBoolean(this.isDown);
     }
 
-	@Override
+    @Override
     public void processMessage(NetworkEvent.Context ctx) {
-    	final ServerPlayer player = ctx.getSender();
-        
-		if (player != null) {
-			ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-			if (stack != null) {
-				Item item = stack.getItem();
-				if (item instanceof KeypressItem) {
-					if (isDown) {
-						((KeypressItem)item).onCustomKeyDown(stack, player, key, true);
-					} else {
-						((KeypressItem)item).onCustomKeyUp(stack, player, key, true);
-					}
-					return;
-				}
-			}
+        final ServerPlayer player = ctx.getSender();
 
-			stack = player.getItemInHand(InteractionHand.OFF_HAND);
-			if (stack != null) {
-				Item item = stack.getItem();
-				if (item instanceof KeypressItem) {
-					if (isDown) {
-						((KeypressItem)item).onCustomKeyDown(stack, player, key, false);
-					} else {
-						((KeypressItem)item).onCustomKeyUp(stack, player, key, false);
-					}
-					return;
-				}
-			}
-		}
-	}
+        if (player != null) {
+            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if (stack != null) {
+                Item item = stack.getItem();
+                if (item instanceof KeypressItem) {
+                    if (isDown) {
+                        ((KeypressItem) item).onCustomKeyDown(stack, player, key, true);
+                    } else {
+                        ((KeypressItem) item).onCustomKeyUp(stack, player, key, true);
+                    }
+                    return;
+                }
+            }
+
+            stack = player.getItemInHand(InteractionHand.OFF_HAND);
+            if (stack != null) {
+                Item item = stack.getItem();
+                if (item instanceof KeypressItem) {
+                    if (isDown) {
+                        ((KeypressItem) item).onCustomKeyDown(stack, player, key, false);
+                    } else {
+                        ((KeypressItem) item).onCustomKeyUp(stack, player, key, false);
+                    }
+                }
+            }
+        }
+    }
 }

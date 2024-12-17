@@ -4,13 +4,7 @@ import com.yyon.grapplinghook.client.ClientProxyInterface;
 import com.yyon.grapplinghook.common.CommonSetup;
 import com.yyon.grapplinghook.config.GrappleConfig;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,7 +31,17 @@ import java.util.List;
 
 public class LongFallBoots extends ArmorItem {
     public LongFallBoots(ArmorMaterials material, int type) {
-        super(material, Type.BOOTS, new Item.Properties().stacksTo(1));
+        super(material, Type.BOOTS, new Properties().stacksTo(1));
+    }
+
+    public static void addToTab(CreativeModeTab.Output items) {
+        ItemStack stack = new ItemStack(CommonSetup.longFallBootsItem.get());
+        items.accept(stack);
+        stack = new ItemStack(CommonSetup.longFallBootsItem.get());
+        stack.enchant(CommonSetup.wallrunEnchantment.get(), 1);
+        stack.enchant(CommonSetup.doubleJumpEnchantment.get(), 1);
+        stack.enchant(CommonSetup.slidingEnchantment.get(), 1);
+        items.accept(stack);
     }
 
     @Override
@@ -49,16 +53,5 @@ public class LongFallBoots extends ArmorItem {
             }
         }
         list.add(Component.literal(ClientProxyInterface.proxy.localize("grappletooltip.longfallboots.desc")));
-    }
-
-
-    public static void addToTab(CreativeModeTab.Output items) {
-        ItemStack stack = new ItemStack(CommonSetup.longFallBootsItem.get());
-        items.accept(stack);
-        stack = new ItemStack(CommonSetup.longFallBootsItem.get());
-        stack.enchant(CommonSetup.wallrunEnchantment.get(), 1);
-        stack.enchant(CommonSetup.doubleJumpEnchantment.get(), 1);
-        stack.enchant(CommonSetup.slidingEnchantment.get(), 1);
-        items.accept(stack);
     }
 }

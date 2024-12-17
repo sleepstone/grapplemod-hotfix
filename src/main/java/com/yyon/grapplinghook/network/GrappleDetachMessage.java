@@ -24,27 +24,27 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class GrappleDetachMessage extends BaseMessageClient {
-   
-	public int id;
+
+    public int id;
 
     public GrappleDetachMessage(FriendlyByteBuf buf) {
-    	super(buf);
+        super(buf);
     }
 
     public GrappleDetachMessage(int id) {
-    	this.id = id;
+        this.id = id;
     }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.id = buf.readInt();
+        this.id = buf.readInt();
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.id);
+        buf.writeInt(this.id);
     }
-    
+
     @OnlyIn(Dist.CLIENT)
     public void processMessage(NetworkEvent.Context ctx) {
-    	ClientControllerManager.receiveGrappleDetach(this.id);
+        ClientControllerManager.receiveGrappleDetach(this.id);
     }
 }

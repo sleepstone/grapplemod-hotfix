@@ -1,9 +1,14 @@
 {
-    "parent": "item/handheld",
-    "textures": {
-        "layer0": "grapplemod:item/repeller"
-    },
-	"overrides": [
-	    { "predicate": { "attached": 1 }, "model": "grapplemod:item/repelleron" }
-	]
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "grapplemod:item/repeller"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "attached": 1
+      },
+      "model": "grapplemod:item/repelleron"
+    }
+  ]
 }

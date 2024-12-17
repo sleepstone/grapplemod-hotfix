@@ -19,39 +19,39 @@ import net.minecraftforge.network.NetworkEvent;
  */
 
 public class GrappleModifierMessage extends BaseMessageServer {
-   
-	public BlockPos pos;
-	public GrappleCustomization custom;
+
+    public BlockPos pos;
+    public GrappleCustomization custom;
 
     public GrappleModifierMessage(BlockPos pos, GrappleCustomization custom) {
-    	this.pos = pos;
-    	this.custom = custom;
+        this.pos = pos;
+        this.custom = custom;
     }
 
-	public GrappleModifierMessage(FriendlyByteBuf buf) {
-		super(buf);
-	}
+    public GrappleModifierMessage(FriendlyByteBuf buf) {
+        super(buf);
+    }
 
     public void decode(FriendlyByteBuf buf) {
-    	this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-    	this.custom = new GrappleCustomization();
-    	this.custom.readFromBuf(buf);
+        this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        this.custom = new GrappleCustomization();
+        this.custom.readFromBuf(buf);
     }
 
     public void encode(FriendlyByteBuf buf) {
-    	buf.writeInt(this.pos.getX());
-    	buf.writeInt(this.pos.getY());
-    	buf.writeInt(this.pos.getZ());
-    	this.custom.writeToBuf(buf);
+        buf.writeInt(this.pos.getX());
+        buf.writeInt(this.pos.getY());
+        buf.writeInt(this.pos.getZ());
+        this.custom.writeToBuf(buf);
     }
 
     public void processMessage(NetworkEvent.Context ctx) {
-		Level w = ctx.getSender().level();
-		
-		BlockEntity ent = w.getBlockEntity(this.pos);
+        Level w = ctx.getSender().level();
 
-		if (ent != null && ent instanceof TileEntityGrappleModifier) {
-			((TileEntityGrappleModifier) ent).setCustomizationServer(this.custom);
-		}
+        BlockEntity ent = w.getBlockEntity(this.pos);
+
+        if (ent != null && ent instanceof TileEntityGrappleModifier) {
+            ((TileEntityGrappleModifier) ent).setCustomizationServer(this.custom);
+        }
     }
 }
